@@ -1,0 +1,20 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: normal-resource
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+data:
+  foo: bar
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hook-resource
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/sync-wave: "5"
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+data:
+  foo: bar
