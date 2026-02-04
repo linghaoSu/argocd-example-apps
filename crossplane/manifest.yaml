@@ -1,0 +1,78 @@
+# -------------------
+# 第一部分：标准资源 (验证 Ingress 图标是否丢失)
+# -------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: icon-debug-svc
+  labels:
+    app: icon-debug-suite
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: icon-debug-suite
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: icon-debug-ingress
+  labels:
+    app: icon-debug-suite
+spec:
+  rules:
+  - host: debug.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: icon-debug-svc
+            port:
+              number: 80
+
+---
+# -------------------
+# 第二部分：自定义资源 (验证 Crossplane 图标是否 404)
+# -------------------
+# 1. 定义一个伪造的 Crossplane CRD
+# 注意：group 是 pkg.crossplane.io，这会触发 Argo CD 的特定图标匹配逻辑
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: providers.pkg.crossplane.io
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  group: pkg.crossplane.io
+  names:
+    kind: Provider
+    listKind: ProviderList
+    plural: providers
+    singular: provider
+  scope: Cluster
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              package:
+                type: string
+---
+# 2. 创建该 CRD 的实例
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: icon-debug-provider
+  labels:
+    app: icon-debug-suite
+spec:
+  package: "xpkg.upbound.io/crossplane/provider-nop:v0.2.0"
