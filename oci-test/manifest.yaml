@@ -1,0 +1,7 @@
+apiVersion: v2
+name: my-app
+version: "0.1.0"
+dependencies:
+  - name: my-chart
+    repository: oci://192.168.215.2:5000/charts
+    version: "0.1.0"
