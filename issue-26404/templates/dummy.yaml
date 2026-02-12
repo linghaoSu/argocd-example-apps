@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dummy-anchor
+  annotations:
+    argocd.argoproj.io/sync-wave: "-99" # 确保它最先被 Sync
+data:
+  foo: bar
