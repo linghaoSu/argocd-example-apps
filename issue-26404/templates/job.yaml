@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: repro-job
+  annotations:
+    helm.sh/hook: pre-delete
+    helm.sh/hook-delete-policy: hook-succeeded
+    helm.sh/hook-weight: "0"
+spec:
+  template:
+    spec:
+      serviceAccountName: repro-sa
+      containers:
+      - name: busybox
+        image: busybox
+        command: ["sh", "-c", "echo 'Running pre-delete job'; sleep 5"]
+      restartPolicy: Never
