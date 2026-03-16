@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+spec:
+  initContainers:
+  - name: sidecar-app
+    image: busybox:latest
+    command:
+      - sleep
+      - infinity
+    restartPolicy: Always
+  containers:
+  - name: main-app
+    image: nginx:latest
