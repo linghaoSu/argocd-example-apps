@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: issue-26954-parent
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/linghaoSu/argocd-example-apps.git
+    targetRevision: master
+    path: issue-26954/children
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
